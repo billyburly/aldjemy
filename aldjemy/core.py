@@ -4,7 +4,7 @@ from collections import deque
 
 from django.conf import settings
 from django.db import connections
-from sqlalchemy import create_engine, event, util
+from sqlalchemy import MetaData, create_engine, event, util
 from sqlalchemy.engine import base
 from sqlalchemy.pool import NullPool
 from sqlalchemy.pool import _ConnectionRecord as _ConnectionRecordBase
@@ -12,7 +12,7 @@ from sqlalchemy.pool import _ConnectionRecord as _ConnectionRecordBase
 from .sqlite import SqliteWrapper
 from .wrapper import Wrapper
 
-__all__ = ["get_engine"]
+__all__ = ["get_engine", "get_meta"]
 
 
 class Cache:
@@ -56,6 +56,12 @@ def get_engine(alias="default", **kwargs):
             get_connection_string(alias), pool=pool, **kwargs
         )
     return Cache.engines[alias]
+
+
+def get_meta():
+    if not getattr(Cache, "meta", None):
+        Cache.meta = MetaData()
+    return Cache.meta
 
 
 class DjangoPool(NullPool):

@@ -2,10 +2,10 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.db import router
 from django.db.backends import signals
-from sqlalchemy import MetaData
 
 from .orm import construct_models
 from .session import get_session
+from .core import get_meta
 
 
 def new_session(sender, connection, **kwargs):
@@ -46,7 +46,7 @@ class AldjemyConfig(AppConfig):
 
     def ready(self):
         # Patch models with SQLAlchemy models
-        models = construct_models(MetaData(), _make_sa_model=_make_sa_model)
+        models = construct_models(get_meta(), _make_sa_model=_make_sa_model)
         for model, sa_model in models.items():
             model.sa = sa_model
 
