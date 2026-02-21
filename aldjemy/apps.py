@@ -44,10 +44,16 @@ class AldjemyConfig(AppConfig):
     name = "aldjemy"
     verbose_name = "Aldjemy"
 
+    def __init__(self):
+        self.sa_meta = MetaData()
+    
     def ready(self):
         # Patch models with SQLAlchemy models
-        models = construct_models(MetaData(), _make_sa_model=_make_sa_model)
+        models = construct_models(self.get_meta(), _make_sa_model=_make_sa_model)
         for model, sa_model in models.items():
             model.sa = sa_model
 
         signals.connection_created.connect(new_session)
+
+    def get_meta(self):
+        return self.sa_meta
