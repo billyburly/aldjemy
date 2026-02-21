@@ -44,7 +44,8 @@ class AldjemyConfig(AppConfig):
     name = "aldjemy"
     verbose_name = "Aldjemy"
 
-    def __init__(self):
+    def __init__(self, app_name, app_module):
+        super().__init__(self, app_name, app_module)
         self.sa_meta = MetaData()
     
     def ready(self):
